@@ -168,14 +168,10 @@ var waitForFinalEvent = (function () {
 			});
 /*
 /*
- *		Window resize handler
+ *		Attach window resize handler
  */
-			$(window).resize(function() {
-				if (self.ready) {
-					self.resize = true;
-					self._view_resize();
-					self.map.invalidateSize({animate: false});
-				}
+			$(window).resize(function(){
+				self._resizeHandler(self);
 			});
 		},
 /*
@@ -199,10 +195,21 @@ var waitForFinalEvent = (function () {
 			}
 		},
 /*
+ *  resize handler - triggered on resize event
+ */
+
+		_resizeHandler: function(self) {
+			if (self.ready) {
+				self.resize = true;
+				self._view_resize();
+				self.map.invalidateSize({animate: false});
+			}
+		},		
+/*
  *	Remove the plugin
  */  
 		destroy: function() {
-			$(window).unbind("resize");
+			$(window).unbind("resize", this._resizeHandler);
 			this.map.remove();
 			$(this.view).remove();
 			$.Widget.prototype.destroy.call(this);
